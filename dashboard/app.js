@@ -121,7 +121,9 @@
         el('div', { class: 'fact' }, el('span', { text: 'Watchlist covered' }), el('b', { text: DATA.watchlist_size + ' / ' + DATA.watchlist_size })),
         el('div', { class: 'fact' }, el('span', { text: 'Rows on the board' }), el('b', { text: String(DATA.board_size) })),
         el('div', { class: 'fact' }, el('span', { text: 'Early finds below the floor' }), el('b', { text: String(DATA.early_size) })),
-        el('div', { class: 'fact' }, el('span', { text: 'Top implied value' }), el('b', { text: fmtUsd(DATA.rows[0] ? DATA.rows[0].implied_value_usd : 0) }))
+        el('div', { class: 'fact' }, el('span', { text: 'Top implied value' }), el('b', { text: fmtUsd(DATA.rows[0] ? DATA.rows[0].implied_value_usd : 0) })),
+        el('div', { class: 'fact' }, el('span', { text: 'Median implied value' }), el('b', { text: fmtUsd(DATA.median_implied_usd) })),
+        el('div', { class: 'fact' }, el('span', { text: 'Top three' }), el('b', { text: (DATA.top_three || []).map(function (t) { return t.name; }).join(', ') }))
       )
     );
   }
@@ -276,6 +278,7 @@
       ),
       el('div', { class: 'detail-grid' },
         stat('Implied value', fmtUsd(row.implied_value_usd), true),
+        stat('Board position', 'Top ' + Math.max(1, Math.ceil((row.rank / DATA.board_size) * 100)) + '% of the board', false),
         stat('TVL', fmtUsd(row.tvl_usd), false),
         stat('Seven-day change', fmtPct(row.change_7d), false),
         stat('Age with no token', fmtAge(row.age_days), false),

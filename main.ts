@@ -82,8 +82,11 @@ for (const name of shots) {
 writeFileSync(join(out, 'dossier.json'), buildDossier(out, { text_max_bytes: TEXT_MAX_BYTES, screenshots: SCREENSHOT_CAPS, dashboard: { max_files: 400, max_bytes: 4_194_304 } }));
 
 const top = board[0]!;
+const topThree = radar.top_three.map((t) => `#${t.rank} ${t.slug} ($${t.implied_value_usd.toLocaleString('en-US')})`).join(', ');
 process.stdout.write(
   `early scout: ${snapshot.protocols.length} protocols, ${snapshot.watchlist.length} on the watchlist, ${board.length} rows scored (${radar.early_size} early finds below the floor)\n` +
     `early scout: top row is ${top.slug} at $${top.implied_value_usd.toLocaleString('en-US')} implied value\n` +
+    `early scout: top three are ${topThree}\n` +
+    `early scout: median implied value is $${radar.median_implied_usd.toLocaleString('en-US')}\n` +
     `early scout: wrote ${join(out, 'board.json')}, ${join(out, 'data.js')}, ${join(out, 'dashboard')} (3 files), ${join(out, 'screenshots')} (${shots.length} images) and ${join(out, 'dossier.json')}\n`,
 );

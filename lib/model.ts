@@ -133,6 +133,10 @@ export interface RadarData {
   watchlist_size: number;
   board_size: number;
   early_size: number;
+  /** The three strongest rows, so the page can name the board's head without re-sorting. */
+  top_three: { rank: number; slug: string; name: string; implied_value_usd: number }[];
+  /** The middle row's implied value: half the board sits above it, half below. */
+  median_implied_usd: number;
   rows: RadarRow[];
 }
 
@@ -353,6 +357,15 @@ export function radarRow(row: BoardRow): RadarRow {
   };
 }
 
+/** The middle value of a sorted list of whole dollars, or 0 when it is empty. */
+export function medianOf(values: number[]): number {
+  if (values.length === 0) return 0;
+  const sorted = values.slice().sort((a, b) => a - b);
+  const mid = Math.floor(sorted.length / 2);
+  if (sorted.length % 2 === 1) return sorted[mid]!;
+  return Math.round((sorted[mid - 1]! + sorted[mid]!) / 2);
+}
+
 /** Everything the dashboard renders, from the snapshot. */
 export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): { board: BoardRow[]; radar: RadarData } {
   const board = buildBoard(snapshot, model);
@@ -366,6 +379,8 @@ export function buildRadar(snapshot: Snapshot, model: ModelConstants = MODEL): {
     watchlist_size: snapshot.watchlist.length,
     board_size: board.length,
     early_size: early,
+    top_three: board.slice(0, 3).map((r) => ({ rank: r.rank, slug: r.slug, name: r.name, implied_value_usd: r.implied_value_usd })),
+    median_implied_usd: medianOf(board.map((r) => r.implied_value_usd)),
     rows: board.map(radarRow),
   };
   return { board, radar };
